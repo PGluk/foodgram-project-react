@@ -15,6 +15,7 @@ services:
       context: ../backend
       dockerfile: Dockerfile
     restart: always
+    command: python manage.py migrate --noinput
     depends_on:
       - db
     volumes:
