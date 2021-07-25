@@ -1,28 +1,37 @@
 version: '3.3'
+
 services:
   db:
-    image: postgres:12.4
+    image: postgres:13.2
+    container_name: postgresql
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    restart: always
     env_file:
-      - ./.env
+      - ../.env
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     restart: always
-  web:
-    image: glukosoft/foodgram:latest
-    restart: always
+    depends_on:
+      - db
     volumes:
       - static_value:/code/static/
       - media_value:/code/media/
-    depends_on:
-      - db
     env_file:
-      - ./.env
+      - ../.env
+
   frontend:
-    image: glukosoft/foodgram:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
+
   nginx:
     image: nginx:1.19.3
     ports:
@@ -32,9 +41,13 @@ services:
       - media_value:/media/
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
+      - ../docs:/usr/share/nginx/html/api/docs
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
     restart: always
+    depends_on:
+      - backend
+      - frontend
 
 volumes:
   postgres_data:
