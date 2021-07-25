@@ -3,6 +3,4 @@ WORKDIR /code
 COPY requirements.txt /code
 RUN pip3 install -r requirements.txt
 COPY . /code
-RUN python manage.py migrate --noinput
-RUN python manage.py createsuperuser
 CMD gunicorn foodgram_project.wsgi:application --bind 0.0.0.0:8000
