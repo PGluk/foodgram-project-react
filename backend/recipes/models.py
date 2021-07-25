@@ -7,33 +7,22 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    class Unit(models.TextChoices):
-        GRAM = 'gram', 'г'
-        KILOGRAM = 'kilogram', 'кг'
-
     name = models.CharField(
         max_length=20,
         null=False,
         blank=False
     )
     measurement_unit = models.CharField(
-        max_length=8,
-        choices=Unit.choices,
-        default=Unit.GRAM,
+        max_length=20, verbose_name='Единица измерения'
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ['name', ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'measurement_unit', ],
-                name='unique_recipe_ingredient')
-        ]
 
     def __str__(self):
-        return self.name
+        return f'{self.name} {self.measurement_unit}'
 
 
 class Tag(models.Model):
@@ -42,7 +31,7 @@ class Tag(models.Model):
     slug = models.SlugField(null=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['id', ]
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
