@@ -109,7 +109,7 @@ class UserSerializerModified(UserSerializer):
             'email',
             'id',
             'username',
-                  'first_name',
+            'first_name',
             'last_name',
             'is_subscribed'
         )
@@ -132,16 +132,16 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id',
-                  'tags',
-                  'author',
-                  'ingredients',
-                  'is_favorited',
-                  'is_in_shopping_cart',
-                  'name',
-                  'image',
-                  'text',
-                  'cooking_time'
-                  )
+            'tags',
+            'author',
+            'ingredients',
+            'is_favorited',
+            'is_in_shopping_cart',
+            'name',
+            'image',
+            'text',
+            'cooking_time'
+        )
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
@@ -159,7 +159,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             'tags',
             'author',
             'ingredients',
-                  'name',
+            'name',
             'image',
             'text',
             'cooking_time'
@@ -249,7 +249,7 @@ class ShowFollowSerializer(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
-                  'is_subscribed',
+            'is_subscribed',
             'recipes',
             'recipes_count'
         )
