@@ -79,24 +79,38 @@ class FavoriteViewSet(APIView):
                 {"message": "Рецепт уже добавлен в избранное"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = FavoriteSerializer(data=data,
-                                        context={"request": request})
+        serializer = FavoriteSerializer(
+            data=data,
+            context={"request": request}
+        )
         if not serializer.is_valid():
             return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST
+                            )
 
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
 
-        if not Favorite.objects.filter(user=user, recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if not Favorite.objects.filter(
+                user=user,
+                recipe=recipe).exists():
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        Favorite.objects.get(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        Favorite.objects.get(
+            user=user,
+            recipe=recipe).delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class ShoppingCartViewSet(APIView):
@@ -130,10 +144,15 @@ class ShoppingCartViewSet(APIView):
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+        if not ShoppingCart.objects.filter(
+                user=user,
+                recipe=recipe).exists():
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class DownloadShoppingCart(APIView):
@@ -142,6 +161,7 @@ class DownloadShoppingCart(APIView):
     def get(self, request):
         shopping_cart = request.user.shopping_cart.all()
         buying_list = {}
+
         for item in shopping_cart:
             ingredients = RecipeIngredients.objects.filter(recipe=item.recipe)
             for ingredient in ingredients:
@@ -162,6 +182,7 @@ class DownloadShoppingCart(APIView):
         for item in buying_list:
             wishlist.append(f'{item} - {buying_list[item]["amount"]} '
                             f'{buying_list[item]["measurement_unit"]} \n')
+
         response = HttpResponse(wishlist, 'Content-Type: text/plain')
         response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
         return response
@@ -191,6 +212,7 @@ class FollowViewSet(APIView):
             user=user,
             author__id=author_id
         ).exists()
+
         if user.id == author_id or follow_exist:
             return Response(
                 {"message": "Подписка существует"},
@@ -201,6 +223,7 @@ class FollowViewSet(APIView):
             'author': author_id
         }
         serializer = FollowSerializer(data=data, context={'request': request})
+
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
@@ -214,4 +237,7 @@ class FollowViewSet(APIView):
         author = get_object_or_404(User, id=author_id)
         obj = get_object_or_404(Follow, user=user, author=author)
         obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )

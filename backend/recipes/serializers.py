@@ -127,8 +127,8 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_ingredients(self, obj):
-        qs = RecipeIngredients.objects.filter(recipe=obj)
-        return IngredientInRecipeSerializer(qs, many=True).data
+        record = RecipeIngredients.objects.filter(recipe=obj)
+        return IngredientInRecipeSerializer(record, many=True).data
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
@@ -226,7 +226,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorite
-        fields = ('user', 'recipe')
+        fields = (
+            'user',
+            'recipe'
+        )
 
     def to_representation(self, instance):
         request = self.context.get('request')
