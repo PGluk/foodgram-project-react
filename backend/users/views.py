@@ -14,7 +14,6 @@ class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({'auth_token': str(token)}, status=status.HTTP_200_OK)
@@ -23,4 +22,4 @@ class CustomAuthToken(ObtainAuthToken):
 class Logout(APIView):
     def post(self, request):
         request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)

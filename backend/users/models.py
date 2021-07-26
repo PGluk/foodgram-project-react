@@ -6,7 +6,7 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True, blank=False)
     username = models.CharField(unique=True, blank=False, max_length=20)
-    is_subscribed = models.BooleanField(default=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 

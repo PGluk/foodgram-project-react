@@ -7,9 +7,9 @@ from .views import (
     RecipeViewSet,
     ShoppingCartViewSet,
     TagViewSet,
-    download_shopping_cart,
     ListFollowViewSet,
-    FollowViewSet
+    FollowViewSet,
+    DownloadShoppingCart
 )
 
 router = DefaultRouter()
@@ -17,17 +17,17 @@ router = DefaultRouter()
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientViewSet)
 router.register('recipes', RecipeViewSet)
+
 urlpatterns = [
-    path('', include(router.urls)),
     path('users/subscriptions/',
          ListFollowViewSet.as_view(), name='subscriptions'),
     path('users/<int:author_id>/subscribe/',
          FollowViewSet.as_view(), name='subscribe'),
     path('recipes/download_shopping_cart/',
-         download_shopping_cart,
-         name='download'),
+         DownloadShoppingCart.as_view(), name='dowload_shopping_cart'),
     path('recipes/<int:recipe_id>/favorite/',
          FavoriteViewSet.as_view(), name='favorite'),
     path('recipes/<int:recipe_id>/shopping_cart/',
          ShoppingCartViewSet.as_view(), name='shopping_cart'),
+    path('', include(router.urls)),
 ]

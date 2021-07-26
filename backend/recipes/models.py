@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
-from django_base64field.fields import Base64Field
 
 User = get_user_model()
 
@@ -43,6 +42,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='recipes',
         null=False
     )
     name = models.CharField(
@@ -51,10 +51,9 @@ class Recipe(models.Model):
         max_length=30,
         verbose_name='Название рецепта'
     )
-    image = Base64Field(
-        max_length=900000,
-        blank=True,
-        null=True
+    image = models.ImageField(
+        upload_to='recipes/images/',
+        verbose_name='Изображение',
     )
     text = models.TextField(
         max_length=128,
@@ -137,10 +136,14 @@ class Follow(models.Model):
 class Favorite(models.Model):
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
-                             verbose_name='Пользователь', )
+                             verbose_name='Пользователь',
+                             related_name='favorites',
+                             )
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
-                               related_name='Рецепт', )
+                               verbose_name='Рецепт',
+                               related_name='favorites',
+                               )
     added_date = models.DateTimeField(auto_now_add=True,
                                       verbose_name='Дата добавления')
 

@@ -4,7 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ('django-insecure-n=epfus&*q29'
               'xd&%kwps3*e@()f83a+m8e5bimm=-k1_!#h-%^')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -18,9 +18,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
     'django_filters',
-    'djoser',
     'users',
     'recipes',
+    'djoser',
 
 ]
 AUTH_USER_MODEL = 'users.User'
@@ -51,6 +51,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.'
                                 'PageNumberPagination',
     'PAGE_SIZE': 10,
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.'
+                                'NamespaceVersioning',
 }
 
 DJOSER = {
@@ -125,6 +127,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = '/static/'
+STATIC_URL = '/dj_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'dj_static')
+
+MEDIA_URL = "/dj_media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "dj_media")
+
 RECIPES_LIMIT = 10
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
