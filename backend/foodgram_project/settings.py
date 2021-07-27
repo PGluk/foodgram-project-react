@@ -4,7 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ('django-insecure-n=epfus&*q29'
               'xd&%kwps3*e@()f83a+m8e5bimm=-k1_!#h-%^')
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -59,15 +59,15 @@ DJOSER = {
 
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserRegistrationSerializer',
+        'user': 'users.serializers.UserDetailSerializer',
         'current_user': 'users.serializers.UserDetailSerializer',
-
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['rest_framework.permissions.AllowAny']
     },
-
-    'HIDE_USERS': False
+    'HIDE_USERS': False,
+    'USER_ID_FIELD': 'id',
 }
 TEMPLATES = [
     {
@@ -118,13 +118,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'ru-ru'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 STATIC_URL = '/dj_static/'

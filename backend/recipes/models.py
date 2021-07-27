@@ -7,9 +7,7 @@ User = get_user_model()
 
 class Ingredient(models.Model):
     name = models.CharField(
-        max_length=20,
-        null=False,
-        blank=False
+        max_length=20, verbose_name='Имя ингредиента'
     )
     measurement_unit = models.CharField(
         max_length=20, verbose_name='Единица измерения'
@@ -25,9 +23,9 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=20, null=False)
-    color = models.CharField(max_length=8, null=False)
-    slug = models.SlugField(null=False)
+    name = models.CharField(max_length=20, null=False, verbose_name='Имя тега')
+    color = models.CharField(max_length=8, null=False, verbose_name='цвет')
+    slug = models.SlugField(null=False, verbose_name='слаг')
 
     class Meta:
         ordering = ['id', ]
@@ -43,11 +41,9 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='recipes',
-        null=False
+        verbose_name='автор'
     )
     name = models.CharField(
-        null=False,
-        blank=False,
         max_length=30,
         verbose_name='Название рецепта'
     )
@@ -57,19 +53,21 @@ class Recipe(models.Model):
     )
     text = models.TextField(
         max_length=128,
-        null=False,
         verbose_name='Описание рецепта'
     )
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='RecipeIngredients')
-    tags = models.ManyToManyField(Tag, through='ReceiptTags')
+                                         through='RecipeIngredient',
+                                         verbose_name='Ингредиенты')
+    tags = models.ManyToManyField(Tag, through='ReceiptTag',
+                                  verbose_name='Теги')
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), ],
         verbose_name='Время приготовления'
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
-        auto_now_add=True, db_index=True
+        auto_now_add=True,
+        db_index=True
     )
 
     class Meta:
@@ -81,24 +79,33 @@ class Recipe(models.Model):
         return f'{self.author}: {self.name}'
 
 
-class RecipeIngredients(models.Model):
+class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Ингредиент'
     )
     amount = models.PositiveSmallIntegerField(
-        null=True, blank=True,
-        verbose_name='Количество ингредиента'
+        verbose_name='Количество'
     )
 
+    class Meta:
+        verbose_name = 'Ингредиенты'
+        verbose_name_plural = verbose_name
 
-class ReceiptTags(models.Model):
+
+class ReceiptTag(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Теги'
+        verbose_name_plural = verbose_name
 
 
 class Follow(models.Model):
@@ -115,7 +122,6 @@ class Follow(models.Model):
 
     created_at = models.DateTimeField(
         auto_now_add=True,
-        null=True,
         verbose_name='Дата создания'
     )
 
@@ -148,7 +154,8 @@ class Favorite(models.Model):
                                       verbose_name='Дата добавления')
 
     class Meta:
-        verbose_name = 'Избранное'
+        verbose_name = 'Избранные'
+        verbose_name_plural = verbose_name
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_favorite'

@@ -4,7 +4,7 @@ from .models import Recipe, Ingredient
 
 
 class RecipeFilter(filters.FilterSet):
-    tags = filters.AllValuesMultipleFilter(field_name='receipttags__tag__slug')
+    tags = filters.AllValuesMultipleFilter(field_name='receipttag__tag__slug')
     is_favorited = filters.BooleanFilter(method='get_favorite')
     is_in_shopping_cart = filters.BooleanFilter(method='get_in_shopping_cart')
 

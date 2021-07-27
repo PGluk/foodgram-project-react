@@ -40,9 +40,9 @@ class UserDetailSerializer(UserSerializer):
 
 
 class AuthTokenSerializer(serializers.Serializer):
-    email = serializers.EmailField(label="Email")
+    email = serializers.EmailField(label='Email')
     password = serializers.CharField(
-        label=("Password",),
+        label=('Password',),
         style={'input_type': 'password'},
         trim_whitespace=False
     )
@@ -54,7 +54,6 @@ class AuthTokenSerializer(serializers.Serializer):
         if email and password:
             user = authenticate(request=self.context.get('request'),
                                 email=email, password=password)
-
             if not user:
                 msg = 'Неверные учетные данные.'
                 raise serializers.ValidationError(msg, code='authorization')

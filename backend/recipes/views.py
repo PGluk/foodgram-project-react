@@ -13,7 +13,7 @@ from .models import (Tag,
                      Recipe,
                      Favorite,
                      ShoppingCart,
-                     RecipeIngredients,
+                     RecipeIngredient,
                      Follow
                      )
 from .permissions import AdminOrAuthorOrReadOnly
@@ -69,25 +69,14 @@ class FavoriteViewSet(APIView):
     def get(self, request, recipe_id):
         user = request.user
         data = {
-            "user": user.id,
-            "recipe": recipe_id,
+            'user': user.id,
+            'recipe': recipe_id,
         }
-
-        if Favorite.objects.filter(user=user,
-                                   recipe__id=recipe_id).exists():
-            return Response(
-                {"message": "Рецепт уже добавлен в избранное"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         serializer = FavoriteSerializer(
             data=data,
-            context={"request": request}
+            context={'request': request}
         )
-        if not serializer.is_valid():
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST
-                            )
-
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
             serializer.data,
@@ -97,13 +86,6 @@ class FavoriteViewSet(APIView):
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
-
-        if not Favorite.objects.filter(
-                user=user,
-                recipe=recipe).exists():
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
         Favorite.objects.get(
             user=user,
@@ -119,35 +101,19 @@ class ShoppingCartViewSet(APIView):
     def get(self, request, recipe_id):
         user = request.user
         data = {
-            "user": user.id,
-            "recipe": recipe_id,
+            'user': user.id,
+            'recipe': recipe_id,
         }
-        shopping_cart_exist = ShoppingCart.objects.filter(
-            user=user,
-            recipe__id=recipe_id
-        ).exists()
-        if shopping_cart_exist:
-            return Response(
-                {"message": "Продукты уже в корзине"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+
         context = {'request': request}
         serializer = ShoppingCartSerializer(data=data, context=context)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not ShoppingCart.objects.filter(
-                user=user,
-                recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(
@@ -163,7 +129,7 @@ class DownloadShoppingCart(APIView):
         buying_list = {}
 
         for item in shopping_cart:
-            ingredients = RecipeIngredients.objects.filter(recipe=item.recipe)
+            ingredients = RecipeIngredient.objects.filter(recipe=item.recipe)
             for ingredient in ingredients:
                 amount = ingredient.amount
                 name = ingredient.ingredient.name
@@ -208,27 +174,14 @@ class FollowViewSet(APIView):
 
     def get(self, request, author_id):
         user = request.user
-        follow_exist = Follow.objects.filter(
-            user=user,
-            author__id=author_id
-        ).exists()
 
-        if user.id == author_id or follow_exist:
-            return Response(
-                {"message": "Подписка существует"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         data = {
             'user': user.id,
             'author': author_id
         }
         serializer = FollowSerializer(data=data, context={'request': request})
 
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
