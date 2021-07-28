@@ -129,5 +129,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'dj_static')
 MEDIA_URL = "/dj_media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "dj_media")
 
-RECIPES_LIMIT = 10
+RECIPES_LIMIT = 4
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
