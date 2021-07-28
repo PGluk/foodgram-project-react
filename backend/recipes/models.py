@@ -23,9 +23,9 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=20, null=False, verbose_name='Имя тега')
-    color = models.CharField(max_length=8, null=False, verbose_name='цвет')
-    slug = models.SlugField(null=False, verbose_name='слаг')
+    name = models.CharField(max_length=20, verbose_name='Имя тега')
+    color = models.CharField(max_length=8, verbose_name='цвет')
+    slug = models.SlugField(verbose_name='слаг')
 
     class Meta:
         ordering = ['id', ]
