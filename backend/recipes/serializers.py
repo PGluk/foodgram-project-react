@@ -96,6 +96,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField()
 
     class Meta:
         model = RecipeIngredient
@@ -157,6 +158,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -170,6 +172,24 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
+
+    def validate(self, data):
+        ingredients = self.initial_data.get('ingredients')
+        for item in ingredients:
+            if int(item['amount']) < 0:
+                raise serializers.ValidationError(
+                    {'ingredients': (
+                        'Убедитесь, что значение количества ингредиента больше 0')
+                    }
+                )
+        return data
+
+    def validate_cooking_time(self, data):
+        if data <= 0:
+            raise serializers.ValidationError(
+                'Введите целое число больше 0 для времени готовки'
+            )
+        return data
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags')
@@ -206,7 +226,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             )
         instance.name = validated_data.pop('name')
         instance.text = validated_data.pop('text')
-        instance.image = validated_data.pop('image')
+        if validated_data.get('image') is not None:
+            instance.image = validated_data.pop('image')
         instance.cooking_time = validated_data.pop('cooking_time')
         instance.save()
         return instance

@@ -16,6 +16,7 @@ from .models import (Tag,
                      RecipeIngredient,
                      Follow
                      )
+from .paginators import CustomPageNumberPaginator
 from .permissions import AdminOrAuthorOrReadOnly
 from .serializers import (TagSerializer,
                           IngredientSerializer,
@@ -51,6 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [AdminOrAuthorOrReadOnly, ]
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = RecipeFilter
+    pagination_class = CustomPageNumberPaginator
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
